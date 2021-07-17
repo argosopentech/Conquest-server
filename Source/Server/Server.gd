@@ -6,6 +6,7 @@ const MAX_PLAYERS = 2000
 var players_online = []
 var players_names = {}
 var lobbies = {}
+var players_in_lobbies = {}
 
 var colors = {
 	0: Color.orange,
@@ -37,7 +38,11 @@ func _player_connected(player_id):
 	rpc_id(player_id, "send_player_data")
 
 func _player_disconnected(player_id):
-	pass
+	if players_in_lobbies.has(player_id):
+		var reason = "Player " + players_names[player_id] + " disconnected."
+		remove_player_from_lobby(players_in_lobbies[player_id], player_id, reason)
+	players_online.erase(player_id)
+	players_names.erase(player_id)
 
 remote func get_player_data(player_name):
 	var player_id = get_tree().get_rpc_sender_id()
@@ -57,6 +62,8 @@ remote func create_lobby(lobby_data):
 	# Append lobbies list
 	lobbies[lobbies.size()] = lobby_data
 	
+	players_in_lobbies[player_id] = lobby_data["code"]
+	
 	# Notify player
 	rpc_id(player_id, "lobby_created", lobby_data)
 
@@ -70,8 +77,9 @@ remote func join_lobby(lobby_code, lobby_pass):
 				lobbies[lobby_code]["players"][player_number]["id"] = player_id
 				lobbies[lobby_code]["players"][player_number]["name"] = players_names[player_id]
 				lobbies[lobby_code]["players"][player_number]["color"] = colors[player_number]
-				for player in lobbies[lobby_code]["players"]:
-					rpc_id(player["id"], "joined_lobby", lobbies[lobby_code])
+				players_in_lobbies[player_id] = lobby_code
+				reason = "Player " + players_names + " joined."
+				update_lobby_to_players(lobby_code, reason)
 			else:
 				reason = "Invalid Password!"
 				rpc_id(player_id, "failed_to_join_lobby", reason)
@@ -80,3 +88,27 @@ remote func join_lobby(lobby_code, lobby_pass):
 			rpc_id(player_id, "failed_to_join_lobby", reason)
 	else:
 		rpc_id(player_id, "failed_to_join_lobby", reason)
+
+func update_lobby_to_players(lobby_code, reason = ""):
+	for p_id in lobbies[lobby_code]["players"].keys():
+		rpc_id(lobbies[lobby_code]["players"][p_id]["id"], "update_lobby", lobbies[lobby_code], reason)
+
+remote func leave_lobby(lobby_code):
+	var player_id = get_tree().get_rpc_sender_id()
+	remove_player_from_lobby(lobby_code, player_id)
+	
+remote func kick_player_from_lobby(lobby_code, player_id):
+	var kicker_id = get_tree().get_rpc_sender_id()
+	var reason = "Player " + players_names[player_id] + " kicked by " + players_names[kicker_id] + "." 
+	remove_player_from_lobby(lobby_code, player_id, reason)
+
+func remove_player_from_lobby(lobby_code, player_id, reason = ""):
+	if not reason:
+		reason = "Player " + players_names[player_id] + " left."
+	if lobbies.has(lobby_code):
+		for p_id in lobbies[lobby_code]["players"].keys():
+			if lobbies[lobby_code]["players"][p_id]["id"] == player_id:
+				lobbies[lobby_code]["players"].erase(p_id)
+				players_in_lobbies.erase(player_id)
+				update_lobby_to_players(lobby_code, reason)
+				break
