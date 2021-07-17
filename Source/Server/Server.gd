@@ -110,5 +110,8 @@ func remove_player_from_lobby(lobby_code, player_id, reason = ""):
 			if lobbies[lobby_code]["players"][p_id]["id"] == player_id:
 				lobbies[lobby_code]["players"].erase(p_id)
 				players_in_lobbies.erase(player_id)
+				for other_p_id in range(p_id+1, lobbies[lobby_code]["max_players"]):
+					lobbies[lobby_code]["players"][other_p_id - 1] = lobbies[lobby_code]["players"][other_p_id]
+				lobbies[lobby_code]["players"].erase(lobbies[lobby_code]["players"].size() - 1)
 				update_lobby_to_players(lobby_code, reason)
 				break
