@@ -115,3 +115,7 @@ func remove_player_from_lobby(lobby_code, player_id, reason = ""):
 				lobbies[lobby_code]["players"].erase(lobbies[lobby_code]["players"].size() - 1)
 				update_lobby_to_players(lobby_code, reason)
 				break
+
+remote func send_active_lobbies():
+	var player_id = get_tree().get_rpc_sender_id()
+	rpc_id(player_id, "get_active_lobbies", lobbies)
