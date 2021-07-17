@@ -56,3 +56,27 @@ remote func create_lobby(lobby_data):
 	
 	# Append lobbies list
 	lobbies[lobbies.size()] = lobby_data
+	
+	# Notify player
+	rpc_id(player_id, "lobby_created", lobby_data)
+
+remote func join_lobby(lobby_code, lobby_pass):
+	var player_id = get_tree().get_rpc_sender_id()
+	var reason = "Lobby does not exist!"
+	if lobbies.has(lobby_code):
+		if lobbies[lobby_code]["players"] < lobbies[lobby_code]["max_players"]:
+			if lobbies[lobby_code]["pass"] == lobby_pass:
+				var player_number = lobbies[lobby_code]["players"].size()
+				lobbies[lobby_code]["players"][player_number]["id"] = player_id
+				lobbies[lobby_code]["players"][player_number]["name"] = players_names[player_id]
+				lobbies[lobby_code]["players"][player_number]["color"] = colors[player_number]
+				for player in lobbies[lobby_code]["players"]:
+					rpc_id(player["id"], "joined_lobby", lobbies[lobby_code])
+			else:
+				reason = "Invalid Password!"
+				rpc_id(player_id, "failed_to_join_lobby", reason)
+		else:
+			reason = "Lobby is full!"
+			rpc_id(player_id, "failed_to_join_lobby", reason)
+	else:
+		rpc_id(player_id, "failed_to_join_lobby", reason)
