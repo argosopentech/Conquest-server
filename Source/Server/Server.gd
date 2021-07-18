@@ -35,7 +35,7 @@ func start_server():
 
 func _player_connected(player_id):
 	players_online.append(player_id)
-	rpc_id(player_id, "send_player_data")
+	rpc_id(player_id, "send_player_name")
 
 func _player_disconnected(player_id):
 	if players_in_lobbies.has(player_id):
@@ -44,7 +44,7 @@ func _player_disconnected(player_id):
 	players_online.erase(player_id)
 	players_names.erase(player_id)
 
-remote func get_player_data(player_name):
+remote func get_player_name(player_name):
 	var player_id = get_tree().get_rpc_sender_id()
 	players_names[player_id] = player_name
 
