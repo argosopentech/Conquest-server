@@ -142,3 +142,15 @@ remote func send_message(lobby_code, message, sender):
 	for i in range(lobbies[lobby_code].current_players):
 		var player_id = lobbies[lobby_code].players[i].id
 		rpc_id(player_id, "get_message", message, sender)
+
+remote func start_game(lobby_code):
+	for i in range(lobbies[lobby_code].current_players):
+		var player_id = lobbies[lobby_code].players[i].id
+		rpc_id(player_id, "game_started")
+
+remote func send_node_func_call(lobby_code, node_path, function, parameter=null):
+	var sender_id = get_tree().get_rpc_sender_id()
+	for i in range(lobbies[lobby_code].current_players):
+		var player_id = lobbies[lobby_code].players[i].id
+		if player_id != sender_id:
+			rpc_id(player_id, "get_node_func_call", node_path, function, parameter)
