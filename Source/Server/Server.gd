@@ -45,7 +45,7 @@ func _player_connected(player_id):
 
 func _player_disconnected(player_id):
 	if players_in_lobbies.has(player_id):
-		var reason = "Player " + players_names[player_id] + " disconnected."
+		var reason = players_names[player_id] + " disconnected."
 		remove_player_from_lobby(players_in_lobbies[player_id], player_id, reason)
 	players_online.erase(player_id)
 	players_names.erase(player_id)
@@ -108,17 +108,16 @@ remote func leave_lobby(lobby_code):
 	
 remote func kick_player_from_lobby(lobby_code, player_id):
 	var kicker_id = get_tree().get_rpc_sender_id()
-	var reason = "Player " + players_names[player_id] + " kicked by " + players_names[kicker_id] + "." 
+	var reason = players_names[player_id] + " kicked by " + players_names[kicker_id] + "." 
 	rpc_id(player_id, "kicked_from_lobby", reason)
 	remove_player_from_lobby(lobby_code, player_id, reason)
 
 func remove_player_from_lobby(lobby_code, player_id, reason = ""):
 	if not reason:
-		reason = "Player " + players_names[player_id] + " left."
+		reason = players_names[player_id] + " left."
 	if lobbies.has(lobby_code):
 		for p_id in range(lobbies[lobby_code]["players"].size()):
 			if lobbies[lobby_code]["players"][p_id]["id"] == player_id:
-				#lobbies[lobby_code]["players"].remove(p_id)
 				players_in_lobbies.erase(player_id)
 				for other_p_id in range(p_id, lobbies[lobby_code]["players"].size() - 1):
 					var color = lobbies[lobby_code]["players"][other_p_id].color
@@ -138,3 +137,8 @@ remote func send_active_lobbies():
 
 func update_colors(lobby_code):
 	pass
+
+remote func send_message(lobby_code, message, sender):
+	for i in range(lobbies[lobby_code].current_players):
+		var player_id = lobbies[lobby_code].players[i].id
+		rpc_id(player_id, "get_message", message, sender)
