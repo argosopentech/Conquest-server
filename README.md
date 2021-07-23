@@ -1,6 +1,6 @@
-#### CONQUEST DEDICATED SERVER
+# CONQUEST DEDICATED SERVER
 
-<b>EXPORTING SERVER</b>
+### <b>EXPORTING SERVER</b>
 
 Conquest is an online open source strategy game, very similar to RISK.
 
@@ -20,7 +20,7 @@ I have saved it as ConquestServer.pck
 
 ![Linux Preset](/images/LinuxExport.PNG)
 
-<b>GODOT SERVER</b>
+### <b>GODOT SERVER</b>
 
 Now we have to grab Godot’s server binary for linux: https://godotengine.org/download/server
 
@@ -36,7 +36,7 @@ After that, you can rename the server file the same as your pck file, excluding 
 
 Now that we have both files, we are ready to put the server into production.
 
-<b>LINODE</b>
+### <b>LINODE</b>
 
 I will be using Ubuntu 20.04 on Linode to run my server.
 
@@ -48,7 +48,7 @@ For that we will go to: https://cloud.linode.com/linodes and you might have to s
 
 You can hit the Create Linode button, and it will bring you to the setup screen.
 
-<b>LINODE SETUP</b>
+### <b>LINODE SETUP</b>
 
 I have chosen Ubuntu 20.04 LTS as my distribution image.
 
@@ -68,7 +68,7 @@ After that, it should provide you the IP addresses and SSH Access.
 
 Note the IP address, we will use it to connect to our server in the next section.
 
-<b>SERVER LOGIN</b>
+### <b>SERVER LOGIN</b>
 
 Now that we have the server setup, we can login to it and put our Godot files in there.
 
@@ -84,7 +84,7 @@ Once finished installing, you can access it via Start Menu, it should look like 
 
 You can type in your IP address here that you got from Linode and hit the Open button, which should bring a console window, where you can login as root and password that you set up when creating your Linode.
 
-<b>SERVER UPDATE</b>
+### <b>SERVER UPDATE</b>
 
 This console window is basically your server’s terminal, so whenever you want to do anything to the server you do it here.
 
@@ -102,7 +102,7 @@ Type in y+enter if it asks for your permissions during the update.
 
 Once finished, we can move on to copying our files to the server.
 
-<b>FTP CLIENT</b>
+### <b>FTP CLIENT</b>
 
 To transfer files to the server, we need a FTP client program like FileZilla:
 
@@ -119,7 +119,7 @@ You can put your IP in the Host column, root as your username and password as pa
 
 For the port we will be using port 22, so simply put 22 in there and hit the Quickconnect button.
 
-<b>FILE TRANSFER</b>
+### <b>FILE TRANSFER</b>
 
 File browser on the left is for your local computer, and the right one is representing your server.
 
@@ -131,7 +131,7 @@ After that you can drag the files from your local computer into the server by si
 
 ![FileZilla File Transfer](/images/FileZilla-FileTransfer.PNG)
 
-<b>FILE PERMISSIONS</b>
+### <b>FILE PERMISSIONS</b>
 
 In linux, you can't execute a program if you don’t have proper file permissions set for it.
 
@@ -142,7 +142,7 @@ After that it should open a File Permission menu, simply check all the checkboxe
 
 ![FileZilla File Permissions](/images/FileZilla-FilePermissions.PNG)
 
-<b>RUNNING THE SERVER</b>
+### <b>RUNNING THE SERVER</b>
 
 After transferring our files and setting permissions to them, we are now ready to run our server.
 
@@ -167,7 +167,7 @@ And it should run our server.
 
 ![Running the server](/images/Putty-GodotServerRunning.PNG)
 
-<b>RUNNING THE CLIENT</b>
+### <b>RUNNING THE CLIENT</b>
 
 Once we have server side ready and running, we can head over to the client side and replace our previous local IP to our new Ubuntu server IP.
 
@@ -179,7 +179,7 @@ In there, change the SERVER_IP constant to your server's IP and make sure to kee
 
 After that, you can export the game and play it with your friends and community powered by your own dedicated server.
 
-<b>BONUS</b>
+### <b>BONUS</b>
 
 Right now our server works and everything seems fine, until we restart the ubuntu server or if there is any crash, then our server just stops there and does not continue to run.
 
