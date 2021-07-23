@@ -16,7 +16,7 @@ After that you have to choose a platform you want to run your game’s server on
 
 For Linux, you have to export the server project’s pck file only but as Linux preset set.
 
-I have saved it as ConquestServer.pck
+I have saved it as ```ConquestServer.pck```
 
 ![Linux Preset](/images/LinuxExport.PNG)
 
