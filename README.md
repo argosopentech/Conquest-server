@@ -18,7 +18,7 @@ For Linux, you have to export the server project’s pck file only but as Linux 
 
 I have saved it as ConquestServer.pck
 
-![Linux Preset](/images/LinuxExport.png)
+![Linux Preset](/images/LinuxExport.PNG)
 
 <b>GODOT SERVER</b>
 
@@ -44,7 +44,7 @@ You can use any other Linux distro and even follow along if you have Linux in yo
 
 For that we will go to: https://cloud.linode.com/linodes and you might have to sign up for an account if you are a new user, after that you should see a similar screen.
 
-![Linode Home](/images/LinodeHome.png)
+![Linode Home](/images/LinodeHome.PNG)
 
 You can hit the Create Linode button, and it will bring you to the setup screen.
 
@@ -54,7 +54,7 @@ I have chosen Ubuntu 20.04 LTS as my distribution image.
 
 I have chosen Atlanta, GA as the region and Nanode 1 GB as my Linode plan.
 
-![Linode Plan](/images/LinodeSetup.png)
+![Linode Plan](/images/LinodeSetup.PNG)
 
 You can also set the Linode label, add any tags and set your root password.
 
@@ -80,7 +80,7 @@ After downloading it, you just double click and Install the software.
 
 Once finished installing, you can access it via Start Menu, it should look like this:
 
-![Putty](/images/Putty.png)
+![Putty](/images/Putty.PNG)
 
 You can type in your IP address here that you got from Linode and hit the Open button, which should bring a console window, where you can login as root and password that you set up when creating your Linode.
 
@@ -88,7 +88,7 @@ You can type in your IP address here that you got from Linode and hit the Open b
 
 This console window is basically your server’s terminal, so whenever you want to do anything to the server you do it here.
 
-![Putty Login](/images/PuttyConsole.png)
+![Putty Login](/images/PuttyConsole.PNG)
 
 After you first login, it's generally a good idea to update a Linux machine.
 
@@ -112,7 +112,7 @@ Once you download it, simply install it by hitting the next buttons.
 
 It should look something like this when you open it after installation:
 
-![FileZilla](/images/FileZilla.png)
+![FileZilla](/images/FileZilla.PNG)
 
 
 You can put your IP in the Host column, root as your username and password as password.
@@ -129,7 +129,7 @@ You can then create a conquest_server folder in the server side, path should be 
 
 After that you can drag the files from your local computer into the server by simply dragging them across.
 
-![FileZilla File Transfer](/images/FileZilla-FileTransfer.png)
+![FileZilla File Transfer](/images/FileZilla-FileTransfer.PNG)
 
 <b>FILE PERMISSIONS</b>
 
@@ -140,7 +140,7 @@ To do that, we have to select our server files in the server side, right click a
 
 After that it should open a File Permission menu, simply check all the checkboxes and hit the OK button.
 
-![FileZilla File Permissions](/images/FileZilla-FilePermissions.png)
+![FileZilla File Permissions](/images/FileZilla-FilePermissions.PNG)
 
 <b>RUNNING THE SERVER</b>
 
@@ -165,7 +165,7 @@ Once there, you can type in:
 
 And it should run our server.
 
-![Running the server](/images/Putty-GodotServerRunning.png)
+![Running the server](/images/Putty-GodotServerRunning.PNG)
 
 <b>RUNNING THE CLIENT</b>
 
@@ -175,7 +175,7 @@ Head over to ```res://Source/Server/Server.gd```
 
 In there, change the SERVER_IP constant to your server's IP and make sure to keep it in the double quotes.
 
-![Changing Server IP](/images/ConquestClientServerFile.png)
+![Changing Server IP](/images/ConquestClientServerFile.PNG)
 
 After that, you can export the game and play it with your friends and community powered by your own dedicated server.
 
