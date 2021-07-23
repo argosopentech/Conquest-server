@@ -10,7 +10,7 @@ This read-me describes how we can set up its dedicated server.
 
 For that you will need both, the client side source code and the server side source code.
 
-You can grab the server side code here: https://github.com/argosopentech/Conquest-server
+You can grab the server side code here in this repository.
 
 After that you have to choose a platform you want to run your game’s server on, mostly Linux is best suited for this task and we will will be using it below.
 
