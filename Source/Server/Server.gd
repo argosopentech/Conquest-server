@@ -42,6 +42,7 @@ func start_server():
 func _player_connected(player_id):
 	players_online.append(player_id)
 	rpc_id(player_id, "send_player_name")
+	print("Plyer: " + str(player_id) + " connected.")
 
 func _player_disconnected(player_id):
 	if players_in_lobbies.has(player_id):
@@ -49,10 +50,12 @@ func _player_disconnected(player_id):
 		remove_player_from_lobby(players_in_lobbies[player_id], player_id, reason)
 	players_online.erase(player_id)
 	players_names.erase(player_id)
+	print("Plyer: " + str(player_id) + " disconnected.")
 
 remote func get_player_name(player_name):
 	var player_id = get_tree().get_rpc_sender_id()
 	players_names[player_id] = player_name
+	print("Plyer " + str(player_id) + " has name " + player_name + ".")
 
 remote func create_lobby(lobby_data: Dictionary):
 	# Lobby Code [ID]
