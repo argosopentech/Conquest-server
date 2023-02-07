@@ -8,6 +8,22 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Node",
+"class": "HLServer",
+"language": "GDScript",
+"path": "res://Source/Server/HLServer.gd"
+}, {
+"base": "Node",
+"class": "WSServer",
+"language": "GDScript",
+"path": "res://Source/Server/WSServer.gd"
+} ]
+_global_script_class_icons={
+"HLServer": "",
+"WSServer": ""
+}
+
 [application]
 
 config/name="Conquest Server"

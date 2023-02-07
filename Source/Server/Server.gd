@@ -1,5 +1,11 @@
 extends Node
 
+export var websockets_server = true
+
+var server = null
+var hl_server = preload("res://Source/Server/HLServer.tscn")
+var ws_server = preload("res://Source/Server/WSServer.tscn")
+
 const SERVER_PORT = 1909
 const MAX_PLAYERS = 2000
 
@@ -24,14 +30,25 @@ var colors = {
 }
 
 func _ready():
-	connect_signals()
 	start_server()
+	
+	return
+	connect_signals()
 
 func connect_signals():
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
 
 func start_server():
+	if websockets_server:
+		server = ws_server.instance()
+	else:
+		server = hl_server.instance()
+	add_child(server)
+	server.connect_logging_signals()
+	server.start_server()
+	
+	return
 	var peer = NetworkedMultiplayerENet.new()
 	var error = peer.create_server(SERVER_PORT, MAX_PLAYERS)
 	if error == OK:
