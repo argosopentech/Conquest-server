@@ -75,7 +75,7 @@ func _start_server():
 
 func player_connected(player_id):
 	players_online.append(player_id)
-	rpc_id(player_id, "send_player_name")
+	server.send_data_to_client(player_id, "send_player_name")
 
 func player_disconnected(player_id):
 	if players_in_lobbies.has(player_id):
@@ -97,10 +97,33 @@ func _player_disconnected(player_id):
 	players_names.erase(player_id)
 	print("Plyer: " + str(player_id) + " disconnected.")
 
+func set_player_name(player_id, player_name):
+	players_names[player_id] = player_name
+	print("%s is set as the name for player with id: %d." % [player_name, player_id])
+
 remote func get_player_name(player_name):
 	var player_id = get_tree().get_rpc_sender_id()
 	players_names[player_id] = player_name
-	print("Plyer " + str(player_id) + " has name " + player_name + ".")
+	print("Player " + str(player_id) + " has name " + player_name + ".")
+
+func create_game_lobby(player_id, lobby_data: Dictionary):
+	# Lobby Code [ID]
+	lobby_data["code"] = lobbies.size()
+	
+	# Setting players data for lobby
+	var player_number = 0 #lobby_data["players"].size()
+	
+	lobby_data["players"][player_number]["id"] = player_id
+	lobby_data["players"][player_number]["name"] = players_names[player_id]
+	lobby_data["players"][player_number]["color"] = colors[player_number]
+	lobby_data["current_players"] += 1
+	# Append lobbies list
+	lobbies[lobbies.size()] = lobby_data
+	
+	players_in_lobbies[player_id] = lobby_data["code"]
+	
+	# Notify player
+	server.send_data_to_client(player_id, "game_lobby_created", lobby_data)
 
 remote func create_lobby(lobby_data: Dictionary):
 	# Lobby Code [ID]
@@ -121,6 +144,28 @@ remote func create_lobby(lobby_data: Dictionary):
 	
 	# Notify player
 	rpc_id(player_id, "lobby_created", lobby_data)
+
+func join_game_lobby(player_id, lobby_auth_info):
+	var reason = "Lobby does not exist!"
+	var lobby_code = lobby_auth_info["code"]
+	var lobby_pass = lobby_auth_info["pass"]
+	if lobbies.has(lobby_code):
+		if lobbies[lobby_code]["current_players"] < lobbies[lobby_code]["max_players"]:
+			if lobbies[lobby_code]["pass"] == lobby_pass:
+				var player_number = lobbies[lobby_code]["current_players"]
+				lobbies[lobby_code]["players"][player_number]["id"] = player_id
+				lobbies[lobby_code]["players"][player_number]["name"] = players_names[player_id]
+				lobbies[lobby_code]["players"][player_number]["color"] = colors[player_number]
+				players_in_lobbies[player_id] = lobby_code
+				reason = players_names[player_id] + " has joined."
+				lobbies[lobby_code]["current_players"] += 1
+				update_game_lobby_to_players(lobby_code, reason)
+				return
+			else:
+				reason = "Invalid Password!"
+		else:
+			reason = "Lobby is full!"
+	server.send_data_to_client(player_id, "failed_to_join_game_lobby", reason)
 
 remote func join_lobby(lobby_code, lobby_pass):
 	var player_id = get_tree().get_rpc_sender_id()
@@ -144,6 +189,16 @@ remote func join_lobby(lobby_code, lobby_pass):
 			rpc_id(player_id, "failed_to_join_lobby", reason)
 	else:
 		rpc_id(player_id, "failed_to_join_lobby", reason)
+
+func update_game_lobby_to_players(lobby_code, reason = ""):
+	for p_id in range(lobbies[lobby_code]["players"].size()):
+		if lobbies[lobby_code]["players"][p_id]["id"]:
+			var lobby_data = {"lobby": lobbies[lobby_code], "reason": reason}
+			server.send_data_to_client(
+				lobbies[lobby_code]["players"][p_id]["id"],
+				"update_game_lobby",
+				lobby_data
+			)
 
 func update_lobby_to_players(lobby_code, reason = ""):
 	for p_id in range(lobbies[lobby_code]["players"].size()):
