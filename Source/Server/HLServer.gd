@@ -45,17 +45,18 @@ func client_disconnected(id):
 	print("Client %d has just disconnected." % [id])
 	emit_signal("user_disconnected", id)
 
-remote func received_data_from_client(packet):
+remote func received_data_from_client(method_info):
 	var id = get_tree().get_rpc_sender_id()
-	print("Just received a packet from client %d: %s." % [id, packet])
-	process_packet(id, packet)
+	print("Just received a packet from client %d: %s." % [id, method_info])
+	process_method_info(id, method_info)
 
-func send_data_to_client(id):
-	pass
+func send_data_to_client(id, method, data=null):
+	var method_info = {"purpose": "request", "method": method, "data": data}
+	rpc_id(id, "received_data_from_server", method_info)
 
-func process_packet(id, packet):
+func process_method_info(id, method_info):
 	if !request_handler: return
-	var data = str2var(packet) # data = ["request", "function_name", parameter]
-	if data is Array & data[0] == "request":
-		if request_handler.has_method(data[1]):
-			request_handler.call_deferred(data[1], [id, data[2]])
+	# method_info = {"purpose": "request", "method": "method", "data": data}
+	if method_info is Dictionary & method_info["purpose"] == "request":
+		if request_handler.has_method(method_info["method"]):
+			request_handler.call_deferred(method_info["method"], [id, method_info["data"]])
