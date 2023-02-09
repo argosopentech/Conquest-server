@@ -4,23 +4,28 @@ class_name WSServer
 var server = WebSocketServer.new()
 var request_handler = null
 
+signal user_connected(user_id)
+signal user_disconnected(user_id)
+
 func _ready():
 	set_process(false)
 
-func connect_logging_signals():
+func connect_server_signals():
 	if server.is_connected("client_connected", self, "client_connected"):
 		return
 	server.connect("client_connected", self, "client_connected")
 	server.connect("client_disconnected", self, "client_disconnected")
+	server.connect("data_received", self, "received_data_from_client")
 
-func disconnect_logging_signals():
+func disconnect_server_signals():
 	if !server.is_connected("client_connected", self, "client_connected"):
 		return
 	server.disconnect("client_connected", self, "client_connected")
 	server.disconnect("client_disconnected", self, "client_disconnected")
+	server.disconnect("data_received", self, "received_data_from_client")
 
 func start_server(port = 9080):
-	server.connect("data_received", self, "client_data_received")
+	connect_server_signals()
 	if server.listen(port) == OK:
 		print("The server has started.")
 		set_process(true)
@@ -31,23 +36,27 @@ func start_server(port = 9080):
 		return false
 
 func stop_server():
+	disconnect_server_signals()
 	server.stop()
-	if server.is_connected("data_received", self, "client_data_received"):
-		server.disconnect("data_received", self, "client_data_received")
 
 func set_request_handler(new_handler):
 	request_handler = new_handler
 
 func client_connected(id, _protocol):
 	print("Client %d has just connected." % [id])
+	emit_signal("user_connected", id)
 
 func client_disconnected(id, was_clean=false):
 	print("Client %d has just disconnected." % [id])
+	emit_signal("user_disconnected", id)
 
-func client_data_received(id):
+func received_data_from_client(id):
 	var packet = server.get_peer(id).get_packet().get_string_from_utf8()
 	print("Just received a packet from client %d: %s." % [id, packet])
 	process_packet(id, packet)
+
+func send_data_to_client(id):
+	pass
 
 func process_packet(id, packet):
 	if !request_handler: return

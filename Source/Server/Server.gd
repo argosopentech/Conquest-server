@@ -33,28 +33,56 @@ func _ready():
 	start_server()
 	
 	return
-	connect_signals()
+	_connect_signals()
 
-func connect_signals():
+func _connect_signals():
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
+
+func connect_connection_signals():
+	if server.is_connected("user_connected", self, "player_connected"):
+		return
+	server.connect("user_connected", self, "player_connected")
+	server.connect("user_disconnected", self, "player_disconnected")
+
+func disconnect_connection_signals():
+	if !server.is_connected("user_connected", self, "player_connected"):
+		return
+	server.disconnect("user_connected", self, "player_connected")
+	server.disconnect("user_disconnected", self, "player_disconnected")
 
 func start_server():
 	if websockets_server:
 		server = ws_server.instance()
 	else:
 		server = hl_server.instance()
+	connect_connection_signals()
 	add_child(server)
-	server.connect_logging_signals()
 	server.start_server()
-	
-	return
+
+func stop_server():
+	server.stop_server()
+	disconnect_connection_signals()
+	server.queue_free()
+
+func _start_server():
 	var peer = NetworkedMultiplayerENet.new()
 	var error = peer.create_server(SERVER_PORT, MAX_PLAYERS)
 	if error == OK:
 		get_tree().network_peer = peer
 	else:
 		print("Error creating the server: ", str(error))
+
+func player_connected(player_id):
+	players_online.append(player_id)
+	rpc_id(player_id, "send_player_name")
+
+func player_disconnected(player_id):
+	if players_in_lobbies.has(player_id):
+		var reason = players_names[player_id] + " disconnected."
+		remove_player_from_lobby(players_in_lobbies[player_id], player_id, reason)
+	players_online.erase(player_id)
+	players_names.erase(player_id)
 
 func _player_connected(player_id):
 	players_online.append(player_id)
