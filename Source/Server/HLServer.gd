@@ -59,4 +59,4 @@ func process_method_info(id, method_info):
 	# method_info = {"purpose": "request", "method": "method", "data": data}
 	if method_info is Dictionary & method_info["purpose"] == "request":
 		if request_handler.has_method(method_info["method"]):
-			request_handler.call_deferred(method_info["method"], [id, method_info["data"]])
+			request_handler.call_deferred(method_info["method"], id, method_info["data"])
