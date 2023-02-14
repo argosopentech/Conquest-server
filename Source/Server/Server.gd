@@ -3,8 +3,8 @@ extends Node
 export var websockets_server = true
 
 var server = null
-var hl_server = preload("res://Source/Server/HLServer.tscn")
-var ws_server = preload("res://Source/Server/WSServer.tscn")
+var hl_server = preload("res://Source/Server/HighLevelServer.tscn")
+var ws_server = preload("res://Source/Server/WebSocketsServer.tscn")
 
 const SERVER_PORT = 1909
 const MAX_PLAYERS = 2000
