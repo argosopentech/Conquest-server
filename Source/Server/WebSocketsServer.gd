@@ -46,15 +46,18 @@ func received_data_from_client(id):
 
 func process_method_info(id, method_info):
 	if !request_handler: return
-	if method_info is Dictionary & method_info.has("purpose") & method_info["purpose"] == "request":
+	if method_info is Dictionary and method_info.has("purpose") and method_info["purpose"] == "request":
 		if request_handler.has_method(method_info["method"]):
-			request_handler.call_deferred(method_info["method"], id, method_info["data"])
+			if method_info["data"]:
+				request_handler.call_deferred(method_info["method"], id, method_info["data"])
+			else:
+				request_handler.call_deferred(method_info["method"], id)
 
 func _process(delta):
 	server.poll()
 
 func send_data_to_client(id, method, data=null):
-	var method_info = {"purpose": "request", "method": method, "data": data}
+	var method_info = {"purpose": "response", "method": method, "data": data}
 	server.get_peer(id).put_var(method_info, true)
 
 func stop_server():
