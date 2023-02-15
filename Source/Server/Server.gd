@@ -126,7 +126,7 @@ func leave_game_lobby(player_id, data):
 
 func kick_player_from_game_lobby(player_id, data):
 	var kicker_name = players_names[player_id]
-	var kicked_name = player_names[data["kicked_player_id"]]
+	var kicked_name = players_names[data["kicked_player_id"]]
 	var reason = kicked_name + " kicked by " + kicker_name + "." 
 	server.send_data_to_client(player_id, "kicked_from_lobby", reason)
 	remove_player_from_game_lobby(

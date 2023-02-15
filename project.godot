@@ -10,18 +10,18 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Node",
-"class": "HLServer",
+"class": "HighLevelServer",
 "language": "GDScript",
 "path": "res://Source/Server/HighLevelServer.gd"
 }, {
 "base": "Node",
-"class": "WSServer",
+"class": "WebSocketsServer",
 "language": "GDScript",
 "path": "res://Source/Server/WebSocketsServer.gd"
 } ]
 _global_script_class_icons={
-"HLServer": "",
-"WSServer": ""
+"HighLevelServer": "",
+"WebSocketsServer": ""
 }
 
 [application]
