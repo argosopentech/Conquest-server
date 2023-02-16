@@ -77,7 +77,7 @@ func create_game_lobby(player_id, lobby_data: Dictionary):
 	
 	lobby_data["players"][player_number]["id"] = player_id
 	lobby_data["players"][player_number]["name"] = players_names[player_id]
-	lobby_data["players"][player_number]["color"] = get_random_color()
+	lobby_data["players"][player_number]["color"] = get_random_color(lobby_data["players"])
 	lobby_data["players"][player_number]["host"] = true
 	lobby_data["current_players"] += 1
 	# Append lobbies list
@@ -100,7 +100,7 @@ func join_game_lobby(player_id, lobby_auth_info):
 				var player_number = player_id#lobbies[lobby_code]["current_players"]
 				lobby["players"][player_number] = {
 					"id": player_id, "name": players_names[player_id],
-					"color": get_random_color(), "host": false
+					"color": get_random_color(lobby["players"]), "host": false
 				}
 #				lobby["players"][player_number]["id"] = player_id
 #				lobby["players"][player_number]["name"] = players_names[player_id]
@@ -134,7 +134,7 @@ func leave_game_lobby(player_id, data):
 
 func kick_player_from_game_lobby(player_id, data):
 	var reason = "kicked"
-	server.send_data_to_client(player_id, "kicked_from_lobby", reason)
+	server.send_data_to_client(data["kicked_player_id"], "kicked_from_lobby", reason)
 	remove_player_from_game_lobby(
 		data["kicked_player_id"], {"lobby_code": data["lobby_code"], "lobby": lobbies[data["lobby_code"]], "reason": reason}
 	)
@@ -144,16 +144,20 @@ func remove_player_from_game_lobby(player_id, data):
 		data["reason"] = players_names[player_id] + " left."
 	var lobby = data["lobby"]
 	var player_number = null
+	var is_host = false
 	for p_id in lobby["players"].keys():
 		if p_id != player_id:
 			continue
 		player_number = player_id
+		is_host = lobby["players"][player_number]["host"]
 	players_in_lobbies.erase(player_number)
 	if lobby["current_players"] == 1:
 		lobbies.erase(data["lobby_code"])
 	else:
 		lobby["current_players"] -= 1
 		lobby["players"].erase(player_number)
+		if is_host:
+			lobby["players"][lobby["players"].keys()[0]]["host"] = true
 		update_game_lobby_to_players(data)
 
 func send_active_game_lobbies(player_id, data=null):
@@ -174,7 +178,7 @@ func start_the_game(sender_id, data):
 
 func send_node_method_call(sender_id, data):
 	var lobby = lobbies[data["lobby_code"]]
-	for i in lobby.current_players:
+	for i in lobby.players:
 		var player_id = lobby.players[i].id
 		if player_id == sender_id: continue
 		server.send_data_to_client(
@@ -325,6 +329,12 @@ remote func send_node_func_call(lobby_code, node_path, function, parameter=null)
 		if player_id != sender_id:
 			rpc_id(player_id, "get_node_func_call", node_path, function, parameter)
 
-func get_random_color():
+func get_random_color(players_dict):
 	randomize()
-	return colors[randi() % colors.size()]
+	var color = colors[randi() % colors.size()]
+	var players_colors = []
+	for player in players_dict:
+		players_colors.append(players_dict[player].color)
+	while color in colors:
+		color = colors[randi() % colors.size()]
+	return color
