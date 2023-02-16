@@ -8,6 +8,22 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Node",
+"class": "HighLevelServer",
+"language": "GDScript",
+"path": "res://Source/Server/HighLevelServer.gd"
+}, {
+"base": "Node",
+"class": "WebSocketsServer",
+"language": "GDScript",
+"path": "res://Source/Server/WebSocketsServer.gd"
+} ]
+_global_script_class_icons={
+"HighLevelServer": "",
+"WebSocketsServer": ""
+}
+
 [application]
 
 config/name="Conquest Server"
