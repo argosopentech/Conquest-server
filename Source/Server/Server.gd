@@ -24,7 +24,7 @@ var colors = {
 	0: Color.orange,
 	1: Color.lightblue,
 	2: Color.yellow,
-	3: Color.lightsalmon,
+	3: Color.lightslategray,
 	4: Color.lightgreen,
 	5: Color.lightcoral
 }
@@ -191,6 +191,6 @@ func get_random_color(players_dict):
 	var players_colors = []
 	for player in players_dict:
 		players_colors.append(players_dict[player].color)
-	while color in colors:
+	while color in players_colors:
 		color = colors[randi() % colors.size()]
 	return color
